@@ -1,6 +1,6 @@
 NAME = philo
 
-SRC = main.c
+SRC = main.c \
 		init.c \
 		philo.c \
 		utils.c \
@@ -9,13 +9,13 @@ OBJ = $(SRC:.c=.o)
 
 CC = cc
 
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS = -pthread -g
 
 all: $(NAME)
 
 $(NAME):
 		make all -C ./libft
-		$(CC) $(CFLAGS) $(NAME) $(SRC) libft/libft.a
+		$(CC) $(CFLAGS) $(SRC) libft/libft.a
 
 val: all
 		make -C ./ clean

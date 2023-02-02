@@ -16,13 +16,19 @@ int main (int argc, char **argv)
 {
     t_info data;
 
+    data.arg_c = argc;
     if (argc == 5 || argc == 6)
     {
-        if (init_var(&data, argv) == 1)
-            free(&data.philo);
+        if (init_var(&data, argv, argc) == 1)
+        {
+            //free(&data.philo);
+            ft_printf("error: wrong arguments\n");
+        }    
         else
             init_philo(&data);
     }
+    else
+        ft_printf("error: wrong number of arguments\n");
     my_free(&data);
-
+    return (0);
 }

@@ -1,8 +1,11 @@
 #include "philo.h"
 
-void    free(t_info *data)
+void    my_free(t_info *data)
 {
-    //Free everything here and exit
+    // pthread_mutex_destroy(data->philo->lf);
+    // pthread_mutex_destroy(data->philo->rf);
+    // free(data->philo);
+    ft_printf("freeing memory\n");
 }
 
 int check_if_digits(char **argv)
@@ -10,7 +13,7 @@ int check_if_digits(char **argv)
     int i;
     int j;
 
-    i = 0;
+    i = 1;
     while(argv[i])
     {
         j = 0;
@@ -20,6 +23,14 @@ int check_if_digits(char **argv)
                 return (0);
             j++;
         }
+        i++;
     }
     return (1);
+}
+
+int	ft_isdigit(int c)
+{
+	if (c >= '0' && c <= '9')
+		return (1);
+	return (0);
 }
