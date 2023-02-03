@@ -14,21 +14,21 @@
 
 int main (int argc, char **argv)
 {
-    t_info data;
+    t_data data;
 
-    data.arg_c = argc;
-    if (argc == 5 || argc == 6)
+    if (argc < 5 || argc > 6)
+        return (1);
+    if (check_args(argv) == 1)
     {
-        if (init_var(&data, argv, argc) == 1)
-        {
-            //free(&data.philo);
-            ft_printf("error: wrong arguments\n");
-        }    
-        else
-            init_philo(&data);
-    }
-    else
-        ft_printf("error: wrong number of arguments\n");
-    my_free(&data);
+        ft_printf("error: wrong arguments\n");
+        return (1);
+    }    
+    if (init(&data, argv, argc) == 1)
+        return (1);
+    if (data.no_philos == 1)
+        return (one_philo(&data));
+    if (init_thread(&data) == 1)
+        return (1);
+    // my_free(&data);
     return (0);
 }

@@ -20,11 +20,11 @@ struct phil_args {
     pthread_mutex_t* fork2;
 } phil_args_t;
 
-long long current_timestamp() {
+long long current_timestamp() 
+{
     struct timeval te; 
-    gettimeofday(&te, NULL); // get current time
-    long long milliseconds = te.tv_sec*1000LL + te.tv_usec/1000; // calculate milliseconds
-    // printf("milliseconds: %lld\n", milliseconds);
+    gettimeofday(&te, NULL);
+    long long milliseconds = te.tv_sec*1000LL + te.tv_usec/1000;
     return milliseconds;
 }
 

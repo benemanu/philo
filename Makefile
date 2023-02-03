@@ -9,13 +9,13 @@ OBJ = $(SRC:.c=.o)
 
 CC = cc
 
-CFLAGS = -pthread -g
+CFLAGS = -Wall -Werror -Wextra -pthread -g
 
 all: $(NAME)
 
 $(NAME):
 		make all -C ./libft
-		$(CC) $(CFLAGS) $(SRC) libft/libft.a
+		$(CC) $(CFLAGS) $(SRC) libft/libft.a -o $(NAME)
 
 val: all
 		make -C ./ clean
