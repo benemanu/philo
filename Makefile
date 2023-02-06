@@ -4,6 +4,7 @@ SRC = main.c \
 		init.c \
 		philo.c \
 		utils.c \
+		utils2.c \
 
 OBJ = $(SRC:.c=.o)
 
@@ -24,7 +25,7 @@ val: all
 		--track-origins=yes \
 		--verbose \
 		--log-file=valgrind-out.txt \
-				./$(NAME)
+				./$(NAME) 5 800 200 200 10
 
 clean:
 		make clean -C ./libft

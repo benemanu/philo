@@ -1,12 +1,26 @@
 #include "philo.h"
 
-// void    my_free(t_data *data)
-// {
-//     // pthread_mutex_destroy(data->philo->lf);
-//     // pthread_mutex_destroy(data->philo->rf);
-//     // free(data->philo);
-//     ft_printf("freeing memory\n");
-// }
+void    my_free(t_data *data)
+{
+    int i;
+
+    i = -1;
+    ft_usleep(1);
+    while (++i < data->no_philos)
+    {
+        pthread_mutex_destroy(&data->forks[i]);
+        pthread_mutex_destroy(&data->philos[i].lock);
+    }
+    pthread_mutex_destroy(&data->lock);
+    if (data->tid)
+        free(data->tid);
+    if (data->forks)
+        free(data->forks);
+    if (data->philos)
+        free(data->philos);
+    ft_printf("freeing memory\n");
+    exit(0);
+}
 
 int check_if_digits(char **argv)
 {
@@ -59,6 +73,8 @@ void    print(t_data *data, char *str, int id)
     
     time = current_timestamp() - data->start_time;
     printf("%lld %d %s", time, id, str);
+    if (ft_strncmp(str, "died", 4) == 0)
+        my_free(data);
 }
 
 void	ft_usleep(int ms)

@@ -29,6 +29,6 @@ int main (int argc, char **argv)
         return (one_philo(&data));
     if (init_thread(&data) == 1)
         return (1);
-    // my_free(&data);
+    my_free(&data);
     return (0);
 }

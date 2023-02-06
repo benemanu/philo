@@ -1,6 +1,6 @@
 #include "philo.h"
 
-int init(t_data *data, int argc, char **argv)
+int init(t_data *data, char **argv, int argc)
 {
     if (init_var(data, argv, argc) == 1)
         return (1);
@@ -12,7 +12,7 @@ int init(t_data *data, int argc, char **argv)
     return (0);
 }
 
-int init_var(t_data *data, int argc, char **argv)
+int init_var(t_data *data, char **argv, int argc)
 {
     data->no_philos = ft_atoi(argv[1]);
     data->tt_die = ft_atoi(argv[2]);
@@ -25,7 +25,6 @@ int init_var(t_data *data, int argc, char **argv)
     data->dead = 0;
     data->finished = 0;
     data->start_time = current_timestamp();
-    pthread_mutex_init(&data->write, NULL);
     pthread_mutex_init(&data->lock, NULL);
     return (0);
 }
@@ -39,10 +38,11 @@ int init_philos(t_data *data)
     {
         data->philos[i].data = data;
         data->philos[i].id = i + 1;
-        data->philos[i].eat_cont = 0;
+        data->philos[i].eat_count = 0;
         data->philos[i].status = 0;
         data->philos[i].eating = 0;
         data->philos[i].time_to_die = data->tt_die;
+        data->finished = 0;
         pthread_mutex_init(&data->philos[i].lock, NULL);
         i++;
     }
