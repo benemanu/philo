@@ -5,6 +5,7 @@ SRC = main.c \
 		philo.c \
 		utils.c \
 		utils2.c \
+		utils3.c
 
 OBJ = $(SRC:.c=.o)
 
