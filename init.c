@@ -44,6 +44,7 @@ int init_philos(t_data *data)
         data->philos[i].time_to_die = data->tt_die;
         data->finished = 0;
         pthread_mutex_init(&data->philos[i].lock, NULL);
+        pthread_mutex_init(&data->printf, NULL);
         i++;
     }
     return (0);

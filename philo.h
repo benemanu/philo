@@ -40,6 +40,7 @@ typedef struct s_data
 	long long start_time;
 	pthread_mutex_t *forks;
 	pthread_mutex_t lock;
+	pthread_mutex_t	printf;
 } t_data;
 
 //main.c
@@ -54,7 +55,7 @@ int 				init_forks(t_data *data);
 
 
 //philo.c
-void                take_fork(t_philo *philo);
+int    				take_fork(t_philo *philo);
 void                philo_eats(t_philo *philo);
 void                *routine(void *arg);
 int	    			one_philo(t_data *data);
@@ -71,6 +72,11 @@ void				ft_usleep(int ms);
 
 //utils2.c
 long long 			current_timestamp(void);
-void    			*action(void *arg);
+void    			action(void *arg);
+int 				is_philo_dead(t_data *data);
+int 				is_equal(t_data *data);
+int					finished_eating(t_data *data, int i);
+int 				is_no_philos(t_data *data, int i);
+void    			join_thread(t_data *data);
 
 #endif

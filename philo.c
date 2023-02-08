@@ -6,30 +6,61 @@ void    *routine(void *arg)
 
     philo = (t_philo *)arg;
     philo->time_to_die = philo->data->tt_die + current_timestamp();
-    if (pthread_create(&philo->t1, NULL, &action, (void *)philo))
-        return ((void *)1);
-    while (philo->data->dead == 0)
+    while (is_philo_dead(philo->data) == 0)
     {
-        if (philo->eat_count == philo->data->no_meals)
-            philo->data->finished++;
-        if (philo->data->finished == philo->data->no_philos)
+        if (finished_eating(philo->data, philo->id) == 0)
+        {
+            if (is_philo_dead(philo->data) == 0)
+            {
+                pthread_mutex_lock(&philo->data->lock);
+                philo->data->finished++;
+                pthread_mutex_unlock(&philo->data->lock);
+            }
+        }
+        if (is_equal(philo->data) == 0)
             my_free(philo->data);
-        take_fork(philo);
-        philo->time_to_die = current_timestamp() + philo->data->tt_die;
-        philo_eats(philo);
-        
+        if(take_fork(philo) == 0)
+        {
+            pthread_mutex_lock(&philo->lock);
+            philo->time_to_die = current_timestamp() + philo->data->tt_die;
+            pthread_mutex_unlock(&philo->lock);
+            philo_eats(philo);    
+        }
     }
-    if (pthread_join(philo->t1, NULL))
-        return ((void *)1);
     return ((void*)0);
 }
 
-void    take_fork(t_philo *philo)
+int    take_fork(t_philo *philo)
 {
-    pthread_mutex_lock(philo->rf);
-    print(philo->data, "has taken a fork\n", philo->id);
-    pthread_mutex_lock(philo->lf);
-    print(philo->data, "has taken a fork\n", philo->id);
+    int ind;
+
+    ind = 1;
+    if (is_philo_dead(philo->data) == 0)
+    {
+        if (philo->id % 2 == 0)
+            pthread_mutex_lock(philo->rf);
+        else
+            pthread_mutex_lock(philo->lf);
+        print(philo->data, "has taken a fork\n", philo->id);
+        ind = 0;
+    }
+    if (is_philo_dead(philo->data) == 0)
+    {
+        if (philo->id % 2 == 0)
+            pthread_mutex_lock(philo->lf);
+        else
+            pthread_mutex_lock(philo->rf);
+        print(philo->data, "has taken a fork\n", philo->id);
+    }
+    else
+    {
+        if (philo->id % 2 == 0)
+            pthread_mutex_unlock(philo->rf);
+        else
+            pthread_mutex_unlock(philo->lf);
+        ind = 1;
+    }
+    return (ind);
 }
 
 void    philo_eats(t_philo *philo)
@@ -64,12 +95,6 @@ int init_thread(t_data * data)
         if (pthread_create(&data->tid[i], NULL, &routine, &data->philos[i]))
             return (1);
         ft_usleep(1);
-    }
-    i = -1;
-    while (++i < data->no_philos)
-    {
-        if(pthread_join(data->tid[i], NULL))
-            return (1);
     }
     return (0);
 }

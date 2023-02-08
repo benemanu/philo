@@ -8,34 +8,74 @@ long long current_timestamp(void)
     return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-void check_death(t_philo *philo)
+void    join_thread(t_data *data)
 {
-    if (philo->last_eaten - philo->data->start_time - philo->data->tt_die < 0)
+    int i;
+
+    i = -1;
+    while (++i < data->no_philos)
+        pthread_join(data->tid[i], NULL);
+}
+
+int is_philo_dead(t_data *data)
+{
+    pthread_mutex_lock(&data->lock);
+    if (data->dead == 0)
     {
-        philo->status = 0;
-        print(philo->data, "died\n", philo->id);
-        my_free(philo->data);
+        pthread_mutex_unlock(&data->lock);
+        return (0);
+    }
+    else
+    {
+        pthread_mutex_unlock(&data->lock);
+        return (1);
     }
 }
 
-void    *action(void *arg)
+int is_equal(t_data *data)
 {
-    t_philo *philo;
-
-    philo = (t_philo *) arg;
-    while (philo->data->dead == 0)
+    pthread_mutex_lock(&data->lock);
+    if (data->finished == data->no_philos)
     {
-        pthread_mutex_lock(&philo->lock);
-        if (current_timestamp() >= philo->time_to_die && philo->eating == 0)
-            print(philo->data, "died\n", philo->id);
-        if (philo->eat_count == philo->data->no_meals)
-        {
-            pthread_mutex_lock(&philo->data->lock);
-            philo->data->finished++;
-            philo->eat_count++;
-            pthread_mutex_unlock(&philo->data->lock);
-        }
-        pthread_mutex_unlock(&philo->lock);
+        pthread_mutex_unlock(&data->lock);
+        return (0);
     }
-    return ((void *)0);
+    else
+    {
+        pthread_mutex_unlock(&data->lock);
+        return (1);
+    }
+}
+
+int finished_eating(t_data *data, int i)
+{
+    pthread_mutex_lock(&data->lock);
+    pthread_mutex_lock(&data->philos->lock);
+    if (data->philos[i - 1].eat_count == data->no_meals)
+    {
+        pthread_mutex_unlock(&data->lock);
+        pthread_mutex_unlock(&data->philos->lock);
+        return (0);
+    }
+    else
+    {
+        pthread_mutex_unlock(&data->lock);
+        pthread_mutex_unlock(&data->philos->lock);
+        return (1);
+    }
+}
+
+int is_no_philos(t_data *data, int i)
+{
+    pthread_mutex_lock(&data->lock);
+    if (i == data->no_philos - 1)
+    {
+        pthread_mutex_unlock(&data->lock);
+        return (1);
+    } 
+    else
+    {
+        pthread_mutex_unlock(&data->lock);
+        return (0);
+    }
 }
